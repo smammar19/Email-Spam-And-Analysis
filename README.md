@@ -41,12 +41,12 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 ## Acknowledgements:
 The spam dataset used in this project is from the UCI Machine Learning Repository.
 
-The project utilizes the following libraries:
-Flask for the web framework
-NLTK for natural language processing
-Pandas for data manipulation
-Scikit-learn for machine learning
-LIME for model interpretation
+- The project utilizes the following libraries:
+- Flask for the web framework
+- NLTK for natural language processing
+- Pandas for data manipulation
+- Scikit-learn for machine learning
+- LIME for model interpretation
 
 
 
