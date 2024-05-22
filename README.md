@@ -25,6 +25,16 @@ Enter the SMS text in the provided text area and click the "Predict" button.
 The prediction (spam or not spam), text length, and confidence scores will be displayed.
 Use the buttons in the "Options" section to view different charts and visualizations, such as the dataset pie chart, word importance chart, average length bar chart, and explanation.
 
+## Screenshots
+![6](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/3ea97981-6306-46b3-8198-6870379d1559)
+![7](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/b90e91c7-d04d-40a3-be09-cf32741f190f)
+![01](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/6f81b761-51df-4cbe-8006-0c83a0be1b5c)
+![2](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/8f4b6260-5b9c-41cb-86b8-241d7856852c)
+![3](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/aafa5cbb-40fe-4f4e-adff-1d2a8b3b4387)
+![4](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/4bc310f4-3e99-4ec4-a4df-369e227a9ea2)
+![5](https://github.com/smammar19/Email-Spam-And-Analysis/assets/135743822/62da7d4b-6b35-4c60-afa2-d684a4a8d0eb)
+
+
 ## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
