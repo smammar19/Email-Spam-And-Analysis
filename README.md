@@ -25,10 +25,10 @@ Enter the SMS text in the provided text area and click the "Predict" button.
 The prediction (spam or not spam), text length, and confidence scores will be displayed.
 Use the buttons in the "Options" section to view different charts and visualizations, such as the dataset pie chart, word importance chart, average length bar chart, and explanation.
 
-# Contributing
+## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
-# Acknowledgements:
+## Acknowledgements:
 The spam dataset used in this project is from the UCI Machine Learning Repository.
 
 The project utilizes the following libraries:
