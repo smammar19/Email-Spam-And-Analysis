@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SMS Spam Classifier</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #333333;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            resize: none;
+        }
+        textarea::placeholder {
+            color: #999999;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        #prediction {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        #prediction.spam {
+            color: #ff0000;
+        }
+        #prediction.not-spam {
+            color: #4CAF50;
+        }
+        #text-length {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333333;
+        }
+        #confidence-scores {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333333;
+        }
+        .options-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .option-button {
+            background-color: #f0f0f0;
+            color: #333333;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .option-button:hover {
+            background-color: #e0e0e0;
+        }
+        .chart-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+        .chart-container img {
+            max-width: 90%;
+            max-height: 700px;
+            margin: 0 10px;
+        }
+        .option-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .option-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SMS Spam Classifier</h1>
+        <form action="/predict" method="post">
+            <textarea name="sms_text" id="sms_text" rows="5" placeholder="Enter the SMS text"></textarea>
+            <br />
+            <input type="submit" value="Predict">
+        </form>
+        {% if prediction %}
+        <div id="prediction" class="{{ 'spam' if prediction == 'Spam' else 'not-spam' }}">Prediction: {{ prediction }}</div>
+        <div id="text-length">Text length: {{ text_length }}</div>
+        <div id="confidence-scores" style="display: none;">
+            <p>Spam Probability: {{ spam_probability * 100 }}%</p>
+            <p>Not Spam Probability: {{ not_spam_probability * 100 }}%</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="options-container">
+        <button class="option-button" id="dataset-btn">Dataset Pie Chart</button>
+        <button class="option-button" id="confidence-btn">Confidence Score</button>
+        <button class="option-button" id="word-importance-btn">Word Importance</button>
+        <button class="option-button" id="average-length-btn">Average Length</button>
+        <button class="option-button" id="explanation-btn">Explanation</button>
+        <button class="option-button" id="word-frequency-btn">Word Frequency</button>
+
+
+    </div>
+    <div class="chart-container">
+        <img src="" alt="" id="chart-img">
+        <div id="explanation" style="display: none;">
+          <h3>Explanation:</h3>
+          {% if explanation_text %}
+            <ul>
+              {% for item in explanation_text %}
+              <li>{{ item.word }} ({{ item.weight }})</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No explanation available.</p>
+          {% endif %}
+        </div>
+    </div><script>
+      window.addEventListener('DOMContentLoaded', function() {
+          var datasetBtn = document.getElementById('dataset-btn');
+          var confidenceBtn = document.getElementById('confidence-btn');
+          var wordImportanceBtn = document.getElementById('word-importance-btn');
+          var averageLengthBtn = document.getElementById('average-length-btn');
+          var explanationBtn = document.getElementById('explanation-btn');
+          var chartContainer = document.querySelector('.chart-container');
+          var confidenceScores = document.getElementById('confidence-scores');
+          var chartImg = document.getElementById('chart-img');
+          var explanation = document.getElementById('explanation');
+          var wordFrequencyBtn = document.getElementById('word-frequency-btn');
+
+    if (wordFrequencyBtn) {
+        wordFrequencyBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            hideChart();
+            showChart("{{ url_for('static', filename='freq.png') }}", "Word Frequency Chart");
+            hideExplanation();
+        });
+    }
+
+
+
+  
+          if (datasetBtn) {
+              datasetBtn.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  hideChart();
+                  showChart("{{ url_for('dataset_pie_chart') }}", "Dataset Pie Chart");
+                  hideExplanation();
+              });
+          }
+  
+          if (confidenceBtn) {
+              confidenceBtn.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  hideChart();
+                  confidenceScores.style.display = confidenceScores.style.display === 'none' ? 'block' : 'none';
+                  hideExplanation();
+              });
+          }
+  
+          if (wordImportanceBtn) {
+              wordImportanceBtn.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  hideChart();
+                  showChart("{{ word_importance_chart }}", "Word Importance Chart");
+                  hideExplanation();
+              });
+          }
+  
+          if (averageLengthBtn) {
+              averageLengthBtn.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  hideChart();
+                  showChart("{{ url_for('static', filename='bar chart.png') }}", "Average Length Bar Chart");
+                  hideExplanation();
+              });
+          }
+  
+          if (explanationBtn) {
+              explanationBtn.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  hideChart();
+                  hideConfidenceScores();
+                  hideExplanation();
+                  showExplanation();
+              });
+          }
+  
+          function showChart(src, alt) {
+              chartImg.src = src;
+              chartImg.alt = alt;
+              chartContainer.style.display = 'flex';
+          }
+  
+          function hideChart() {
+              chartImg.src = "";
+              chartImg.alt = "";
+              chartContainer.style.display = 'none';
+          }
+  
+          function hideConfidenceScores() {
+              confidenceScores.style.display = 'none';
+          }
+  
+          function showExplanation() {
+              explanation.style.display = 'block';
+          }
+  
+          function hideExplanation() {
+              explanation.style.display = 'none';
+          }
+      });
+  </script>
+  
+  
+</body>
+</html>
