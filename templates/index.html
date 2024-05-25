@@ -21,6 +21,23 @@
             max-width: 500px;
             width: 100%;
         }
+
+        .buttons-and-chart {
+    display: flex;
+    justify-content: space-between; /* Adjusted to space between buttons and chart */
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    margin-right: 0px;
+}
+.chart-container {
+    max-width: 70%; /* Added max-width for chart container */
+}
+
         h1 {
             margin-bottom: 30px;
             color: #333333;
@@ -156,25 +173,29 @@
         <button class="option-button" id="confidence-btn">Confidence Score</button>
         <button class="option-button" id="word-importance-btn">Word Importance</button>
         <button class="option-button" id="average-length-btn">Average Length</button>
-        <button class="option-button" id="explanation-btn">Explanation</button>
+        <!-- <button class="option-button" id="explanation-btn">Explanation</button> -->
         <button class="option-button" id="word-frequency-btn">Word Frequency</button>
+        <button class="option-button" id="confusion-matrix-btn">Confusion Matrix-Voting</button>
+        <button class="option-button" id="confusion-matrix-stacking-btn">Confusion Matrix SVC</button>
+        <button class="option-button" id="confusion-matrix-mnb-btn">Confusion Matrix MNB</button>
+        <button class="option-button" id="confusion-matrix-etc-btn">Confusion Matrix ETC</button>
 
 
     </div>
     <div class="chart-container">
         <img src="" alt="" id="chart-img">
         <div id="explanation" style="display: none;">
-          <h3>Explanation:</h3>
-          {% if explanation_text %}
-            <ul>
-              {% for item in explanation_text %}
-              <li>{{ item.word }} ({{ item.weight }})</li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p>No explanation available.</p>
-          {% endif %}
-        </div>
+    <h3>Explanation:</h3>
+    {% if explanation_text %}
+    <ul>
+        {% for item in explanation_text %}
+        <li>{{ item.word }} ({{ item.weight }}) - {{ item.label }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No explanation available.</p>
+    {% endif %}
+</div>
     </div><script>
       window.addEventListener('DOMContentLoaded', function() {
           var datasetBtn = document.getElementById('dataset-btn');
@@ -187,6 +208,46 @@
           var chartImg = document.getElementById('chart-img');
           var explanation = document.getElementById('explanation');
           var wordFrequencyBtn = document.getElementById('word-frequency-btn');
+          var confusionMatrixBtn = document.getElementById('confusion-matrix-btn');
+          var confusionMatrixStackingBtn = document.getElementById('confusion-matrix-stacking-btn');
+          var confusionMatrixMNBBtn = document.getElementById('confusion-matrix-mnb-btn');
+          var confusionMatrixETCBtn = document.getElementById('confusion-matrix-etc-btn');
+
+if (confusionMatrixMNBBtn) {
+    confusionMatrixMNBBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        hideChart();
+        showChart("{{ url_for('static', filename='cnf_mnb.png') }}", "Confusion Matrix MNB");
+        hideExplanation();
+    });
+}
+
+if (confusionMatrixETCBtn) {
+    confusionMatrixETCBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        hideChart();
+        showChart("{{ url_for('static', filename='cnf_etc.png') }}", "Confusion Matrix ETC");
+        hideExplanation();
+    });
+}
+
+    if (confusionMatrixStackingBtn) {
+        confusionMatrixStackingBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            hideChart();
+            showChart("{{ url_for('static', filename='cnf_svc.png') }}", "Confusion Matrix Aglos");
+            hideExplanation();
+        });
+    }
+
+    if (confusionMatrixBtn) {
+        confusionMatrixBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            hideChart();
+            showChart("{{ url_for('static', filename='confusion.png') }}", "Confusion Matrix");
+            hideExplanation();
+        });
+    }
 
     if (wordFrequencyBtn) {
         wordFrequencyBtn.addEventListener('click', function(event) {

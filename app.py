@@ -74,10 +74,25 @@ def home():
 def serve_static():
     return send_from_directory(app.static_folder, 'freq.png')
 
+@app.route('/static/confusion.png')
+def serve_confusion_matrix():
+    return send_from_directory(app.static_folder, 'confusion.png')
+
+@app.route('/static/cnf_svc.png')
+def serve_confusion_matrix_stacking():
+    return send_from_directory(app.static_folder, 'cnf_svc.png')
 
 @app.route('/dataset_pie_chart')
 def dataset_pie_chart():
     return send_from_directory('static', 'dataset pie chart.png')
+
+@app.route('/static/cnf_mnb.png')
+def serve_confusion_matrix_mnb():
+    return send_from_directory(app.static_folder, 'cnf_mnb.png')
+
+@app.route('/static/cnf_etc.png')
+def serve_confusion_matrix_etc():
+    return send_from_directory(app.static_folder, 'cnf_etc.png')
 
 
 @app.route('/predict', methods=['POST'])
@@ -95,13 +110,12 @@ def predict():
         prediction = "Not Spam"
     text_length = len(input_sms)
     explanation = explain_prediction(input_sms, tfidf, model)
-    print("Explanation:", explanation)  # Add this line
     explanation_list = explanation.as_list(label=1)
-    print("Explanation list:", explanation_list)  # Add this line
     if explanation_list:
-        explanation_text = [{'word': word, 'weight': weight} for word, weight in explanation_list]
+                    explanation_text = [{'word': word, 'weight': weight, 'label': 'Spam'} for word, weight in explanation_list]   
     else:
-        explanation_text = []
+                    explanation_text = []
+    print("Explanation Text:", explanation_text)
 
     generate_bar_chart(explanation)
     word_importance_chart = 'static/word_importance.png'
